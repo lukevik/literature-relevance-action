@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
+@app.route("/", methods=["GET"])
+def home():
+    return "✅ Literature Relevance API is running."
 
 # Simulated database of articles
 mock_articles = [
