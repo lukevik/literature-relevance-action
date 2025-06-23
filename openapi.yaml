@@ -1,0 +1,103 @@
+openapi: 3.1.0
+info:
+  title: Literature Relevance API
+  version: 1.0.0
+  description: API for searching and evaluating the relevance of academic articles to a user-defined topic.
+paths:
+  /articles/search:
+    get:
+      operationId: searchArticlesByTopic
+      summary: Search articles by topic
+      description: Returns a list of articles related to the specified research topic.
+      parameters:
+        - name: topic
+          in: query
+          required: true
+          description: The research topic or question to search for.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of articles to return.
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: A list of relevant articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+  /articles/evaluate:
+    post:
+      operationId: evaluateArticleRelevance
+      summary: Evaluate relevance of articles
+      description: Takes a list of articles and a user-defined topic and evaluates the relevance of each article.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationRequest'
+      responses:
+        '200':
+          description: Relevance scores and explanations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResult'
+
+components:
+  schemas:
+    Article:
+      type: object
+      required:
+        - title
+        - authors
+        - year
+        - abstract
+        - url
+      properties:
+        title:
+          type: string
+        authors:
+          type: string
+        year:
+          type: integer
+        abstract:
+          type: string
+        url:
+          type: string
+    EvaluationRequest:
+      type: object
+      required:
+        - topic
+        - articles
+      properties:
+        topic:
+          type: string
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Article'
+    EvaluationResult:
+      type: object
+      properties:
+        evaluations:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              relevance_score:
+                type: number
+                format: float
+              summary:
+                type: string
+              justification:
+                type: string
