@@ -1,1 +1,105 @@
+openapi: 3.1.0
+info:
+  title: Literature Relevance API
+  version: 1.0.0
+  description: API for searching and evaluating the relevance of academic articles to a given topic.
+servers:
+  - url: https://literature-relevance-api.onrender.com
+
+paths:
+  /articles/search:
+    get:
+      operationId: searchArticles
+      summary: Search for relevant articles
+      description: Search for articles by topic, with an optional limit on results.
+      parameters:
+        - name: topic
+          in: query
+          required: false
+          description: The topic to search for in article titles and abstracts.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: The maximum number of results to return (default is 5).
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: A list of articles matching the search topic.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    authors:
+                      type: string
+                    year:
+                      type: integer
+                    abstract:
+                      type: string
+                    url:
+                      type: string
+                      format: uri
+
+  /articles/evaluate:
+    post:
+      operationId: evaluateArticles
+      summary: Evaluate the relevance of articles
+      description: Submit a topic and a list of articles to receive relevance scores and summaries.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [topic, articles]
+              properties:
+                topic:
+                  type: string
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, authors, year, abstract, url]
+                    properties:
+                      title:
+                        type: string
+                      authors:
+                        type: string
+                      year:
+                        type: integer
+                      abstract:
+                        type: string
+                      url:
+                        type: string
+                        format: uri
+      responses:
+        '200':
+          description: Evaluation results for each article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  evaluations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        relevance_score:
+                          type: number
+                          format: float
+                        summary:
+                          type: string
+                        justification:
+                          type: string
 
