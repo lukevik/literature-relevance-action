@@ -60,6 +60,39 @@ def evaluate_articles():
         })
 
     return jsonify({"evaluations": evaluations})
+@app.route("/topics", methods=["GET"])
+def list_topics():
+    return jsonify([
+        "phenomenal consciousness",
+        "non-reductive physicalism",
+        "dualism",
+        "intentionality",
+        "free will",
+        "mental causation"
+    ])
+
+@app.route("/articles/summarize", methods=["POST"])
+def summarize_articles():
+    data = request.get_json()
+    articles = data.get("articles", [])
+    summaries = []
+
+    for article in articles:
+        summary = article["abstract"][:120] + "..." if "abstract" in article else ""
+        summaries.append({
+            "title": article.get("title", "Untitled"),
+            "summary": summary
+        })
+
+    return jsonify({"summaries": summaries})
+
+@app.route("/articles/<string:title>", methods=["GET"])
+def get_article_by_title(title):
+    match = next((a for a in mock_articles if a["title"].lower() == title.lower()), None)
+    if match:
+        return jsonify(match)
+    else:
+        return jsonify({"error": "Article not found"}), 404
 
 if __name__ == "__main__":
     import os
