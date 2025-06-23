@@ -102,4 +102,91 @@ paths:
                           type: string
                         justification:
                           type: string
+  /topics:
+    get:
+      operationId: listTopics
+      summary: List example topics
+      description: Returns a predefined list of philosophy-related topics for search or testing.
+      responses:
+        '200':
+          description: A list of example topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /articles/summarize:
+    post:
+      operationId: summarizeArticles
+      summary: Summarize articles
+      description: Accepts a list of articles and returns short summaries based on their abstracts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [articles]
+              properties:
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      abstract:
+                        type: string
+      responses:
+        '200':
+          description: Summaries for the submitted articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summaries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        summary:
+                          type: string
+
+  /articles/{title}:
+    get:
+      operationId: getArticleByTitle
+      summary: Get article by title
+      description: Returns article details by exact title match (case-insensitive).
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  authors:
+                    type: string
+                  year:
+                    type: integer
+                  abstract:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+        '404':
+          description: Article not found
 
