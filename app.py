@@ -1,9 +1,18 @@
 from flask import Flask, request, jsonify
 
+from flask import Flask, request, jsonify, send_from_directory
+import os
+
 app = Flask(__name__)
+
 @app.route("/", methods=["GET"])
 def home():
     return "✅ Literature Relevance API is running."
+
+@app.route("/.well-known/openapi.yaml", methods=["GET"])
+def serve_openapi_spec():
+    return send_from_directory(directory=".well-known", path="openapi.yaml", mimetype="text/yaml")
+
 
 # Simulated database of articles
 mock_articles = [
